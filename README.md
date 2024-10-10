@@ -34,5 +34,7 @@ Flags:
 
 | ONT     | Firmware                | Result                                             |
 |---------|-------------------------|----------------------------------------------------|
+| F601V6  | V6.0.10P6N7             | Open Telnet (with known OF credentials)            |
+| F601V6  | V6.0.10N40              | Open Telnet                                        |
 | F6005V3 | V3.0.10P3N2 (OpenFiber) | Open Telnet (with known OF credentials)            |
 | F6005V3 | V3.0.10N06 (TIM)        | Open Telnet with `--new` flag and mac-addr changed |
