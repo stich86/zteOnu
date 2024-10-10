@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/thank243/zteOnu/utils"
+	"github.com/stich86/zteOnu/utils"
 )
 
 func New(user string, passwd string, ip string, port int) *Factory {
@@ -190,7 +190,7 @@ func (f *Factory) handle() (tlUser string, tlPass string, err error) {
 		fmt.Println("ok")
 	}
 
-	fmt.Print("step [3] check login auth: ")
+	fmt.Print("step [3] check login auth with user: ")
 	switch ver {
 	case 1:
 		if err = f.checkLoginAuth(); err != nil {
@@ -220,22 +220,11 @@ func (f *Factory) handle() (tlUser string, tlPass string, err error) {
 }
 
 func (f *Factory) Handle() (tlUser string, tlPass string, err error) {
-	count := 0
-	for {
-		tlUser, tlPass, err = f.handle()
-		if err != nil {
-			count++
-			if count > 10 {
-				return
-			}
-			fmt.Println(err, fmt.Sprintf("Attempt retrying..(%d/10)", count))
-			time.Sleep(time.Millisecond * 500)
-			continue
-		}
-		break
-	}
-
-	return
+    tlUser, tlPass, err = f.handle()
+    if err != nil {
+        return "", "", err 
+    }
+    return tlUser, tlPass, nil 
 }
 
 func getKeyPool(version uint8, r int, newR int) []byte {
