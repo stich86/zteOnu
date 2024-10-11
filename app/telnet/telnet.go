@@ -90,12 +90,13 @@ func (t *Telnet) sendCmd(commands ...string) error {
         for _, command := range commands {
                 cmd := []byte(command + ctrl)
 
-                n, err := t.Conn.Write(cmd)
+                actual, err := t.Conn.Write(cmd)
                 if err != nil {
                         return fmt.Errorf("failed to send command %s: %v", command, err)
                 }
 
-                if expected, actual := len(cmd), n; expected != actual {
+                expected := len(cmd)
+                if expected != actual {
                         return fmt.Errorf("transmission problem: tried sending %d bytes, but actually only sent %d bytes for command %s", expected, actual, command)
                 }
 
