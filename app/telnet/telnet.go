@@ -3,8 +3,8 @@ package telnet
 import (
 	"fmt"
 	"net"
-	"strings"
 	"strconv"
+	"time"
 )
 
 func New(user string, pass string, ip string, port int) (*Telnet, error) {
@@ -87,18 +87,22 @@ func (t *Telnet) modifyFW() error {
 }
 
 func (t *Telnet) sendCmd(commands ...string) error {
-	cmd := []byte(strings.Join(commands, ctrl) + ctrl)
-	n, err := t.Conn.Write(cmd)
-	if err != nil {
-		return err
-	}
+        for _, command := range commands {
+                cmd := []byte(command + ctrl)
 
-	if expected, actual := len(cmd), n; expected != actual {
-		err := fmt.Errorf("transmission problem: tried sending %d bytes, but actually only sent %d bytes", expected, actual)
-		return err
-	}
+                n, err := t.Conn.Write(cmd)
+                if err != nil {
+                        return fmt.Errorf("failed to send command %s: %v", command, err)
+                }
 
-	return nil
+                if expected, actual := len(cmd), n; expected != actual {
+                        return fmt.Errorf("transmission problem: tried sending %d bytes, but actually only sent %d bytes for command %s", expected, actual, command)
+                }
+
+                time.Sleep(200 * time.Millisecond)
+        }
+
+        return nil
 }
 
 func (t *Telnet) Reboot() error {
