@@ -100,7 +100,8 @@ func run() error {
 	for i := 0; i < len(userList); i++ {
 		var err error
 		count := 0
-		for {
+		success := false
+		for !success {
 			tlUser, tlPass, err = factory.New(userList[i], passwdList[i], ip, port).Handle()
 			if err != nil {
 				count++
@@ -112,8 +113,10 @@ func run() error {
 				continue
 			}
 			fmt.Printf("Success authenticated with user: %s and password: %s\n", userList[i], passwdList[i])
+			success = true
 			break
 		}
+		break
 	}
 
 	if permTelnet {
@@ -128,18 +131,18 @@ func run() error {
 		if err := t.PermTelnet(SecLvl); err != nil {
 			return err
 		} else {
-			fmt.Println("Permanent Telnet succeed\r\nUser: root, Pass: Zte521")
+			fmt.Println("Permanent Telnet succeed\r\nUser: root\nPass: Zte521")
 		}
 
 		// reboot device
-		fmt.Println("wait reboot..")
+		fmt.Println("Wait reboot.. or powercycle it")
 		time.Sleep(time.Second)
 		if err := t.Reboot(); err != nil {
 			return err
 		}
 	} else {
 		if tlUser != "" && tlPass != "" {
- 		   fmt.Printf("Telnet Credential (!! Temporary !!)\nUser: %s\nPass: %s\n", tlUser, tlPass)
+ 		   fmt.Printf("Telnet Credentials (!! Temporary !!)\nUser: %s\nPass: %s\n", tlUser, tlPass)
 		}	
 	}
 	return nil
