@@ -97,27 +97,28 @@ func run() error {
     var tlUser string 
     var tlPass string
 
-	for i := 0; i < len(userList); i++ {
-		var err error
-		count := 0
-		success := false
-		for !success {
-			tlUser, tlPass, err = factory.New(userList[i], passwdList[i], ip, port).Handle()
-			if err != nil {
-				count++
-				if count > 5 {
-				     break
-				}
-				fmt.Println(err, fmt.Sprintf("Attempt retrying..(%d/5)", count))
-				time.Sleep(time.Millisecond * 500)
-				continue
-			}
-			fmt.Printf("Success authenticated with user: %s and password: %s\n", userList[i], passwdList[i])
-			success = true
-			break
-		}
-		break
-	}
+    success := false
+    for i := 0; i < len(userList); i++ {
+
+        var err error
+        for count := 1; count <= 5; count++ {
+
+            tlUser, tlPass, err = factory.New(userList[i], passwdList[i], ip, port).Handle()
+            if err != nil {
+                fmt.Println(err, fmt.Sprintf("Attempt retrying..(%d/5)", count))
+                time.Sleep(time.Millisecond * 500)
+                continue
+            }
+
+            fmt.Printf("Success authenticated with user: %s and password: %s\n", userList[i], passwdList[i])
+            success = true
+            break
+        }
+
+        if success {
+            break
+        }
+    }
 
 	if permTelnet {
 		// create telnet conn
